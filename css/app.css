@@ -8,5 +8,8 @@ body {
 }
 
 #menu{
-    width: 10vw;
+}
+
+#menuCell{
+    width: 20vw;
 }
