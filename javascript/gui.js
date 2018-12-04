@@ -1,9 +1,9 @@
 let canvas,context;
-let plan = {points: []};
-let screenToFieldRatio=1;
+let plan = {field:{height:originalHeight,width:originalWidth},points: []};
 
-const ratio=32/65;
-const fromRatioToSize=25;
+const originalHeight=800;
+const originalWidth=1625;
+const ratio=originalHeight/originalWidth;
 
 function load() {
     console.log("Loading");
@@ -15,8 +15,15 @@ function test() {
     console.log("Test!");
 }
 
+function calculateLocation(location){
+    let x,y;
+    y=(originalHeight/canvas.height)*location.y;
+    x=(originalWidth/canvas.width)*location.x;
+    return {x:x,y:y};
+}
+
 function addPoint(location) {
-    plan.points.push({x:location.x*screenToFieldRatio,y:location.y/screenToFieldRatio});
+    plan.points.push(calculateLocation(location));
     drawPoint(location);
 }
 
@@ -46,7 +53,6 @@ function sizeCanvas(){
         canvasWidth=width;
         canvasHeight=width*ratio;
     }
-    screenToFieldRatio=canvasWidth*ratio;
     canvas.setAttribute("width",canvasWidth.toString());
     canvas.setAttribute("height",canvasHeight.toString());
 }
