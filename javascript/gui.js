@@ -1,14 +1,14 @@
-let canvas,context;
-let plan = {field:{height:originalHeight,width:originalWidth},points: []};
-
 const originalHeight=800;
 const originalWidth=1625;
 const ratio=originalHeight/originalWidth;
 
+let canvas,context;
+let plan = {field:{height:originalHeight,width:originalWidth},points: []};
+
 function load() {
     console.log("Loading");
-    loadDocument();
     loadCanvas();
+    console.log("Done");
 }
 
 function test() {
@@ -28,18 +28,10 @@ function addPoint(location) {
 }
 
 function drawPoint(location) {
-    context.fillRect(location.x,location.y,10,10);
-}
-
-function handleKey(key) {
-
-}
-
-function loadDocument() {
-    document.addEventListener('keydown', function (event) {
-        handleKey(event.key);
-        console.log(event.key);
-    });
+    context.beginPath();
+    context.arc(location.x,location.y,10,0,2*Math.PI);
+    context.fillStyle = '#555555';
+    context.fill();
 }
 
 function sizeCanvas(){
