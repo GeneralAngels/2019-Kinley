@@ -1,6 +1,9 @@
 let canvas,context;
 let plan = {points: []};
-let x, y;
+let screenToFieldRatio=1;
+
+const ratio=32/65;
+const fromRatioToSize=25;
 
 function load() {
     console.log("Loading");
@@ -12,13 +15,13 @@ function test() {
     console.log("Test!");
 }
 
-function addPoint() {
-    console.log("click");
-    drawPoint();
+function addPoint(location) {
+    plan.points.push({x:location.x*screenToFieldRatio,y:location.y/screenToFieldRatio});
+    drawPoint(location);
 }
 
-function drawPoint() {
-    context.fillRect(x,y,10,10);
+function drawPoint(location) {
+    context.fillRect(location.x,location.y,10,10);
 }
 
 function handleKey(key) {
@@ -32,14 +35,43 @@ function loadDocument() {
     });
 }
 
+function sizeCanvas(){
+    const width=screen.availWidth;
+    const height=screen.availHeight;
+    let canvasWidth,canvasHeight;
+    if(width*ratio>height){
+        canvasWidth=height/ratio;
+        canvasHeight=height;
+    }else{
+        canvasWidth=width;
+        canvasHeight=width*ratio;
+    }
+    screenToFieldRatio=canvasWidth*ratio;
+    canvas.setAttribute("width",canvasWidth.toString());
+    canvas.setAttribute("height",canvasHeight.toString());
+}
+
+function drawField(){
+    // Draw Perimeter
+    for(let x=0;x<canvas.width;x++){
+        context.fillRect(x,0,10,10);
+        context.fillRect(x,canvas.height-10,10,10);
+    }
+    for(let y=0;y<canvas.height;y++){
+        context.fillRect(0,y,10,10);
+        context.fillRect(canvas.width-10,y,10,10);
+    }
+
+}
+
 function loadCanvas() {
     canvas=document.getElementById('field');
     context=canvas.getContext('2d');
-    document.addEventListener('mousedown', function (event) {
-        x = event.clientX - canvas.offsetLeft;
-        y = event.clientY - canvas.offsetTop;
-        addPoint();
-    }, false);
+    sizeCanvas();
+    drawField();
+    canvas.onmousedown=function (event) {
+        addPoint({x:event.pageX - this.offsetLeft,y: event.pageY - this.offsetTop});
+    };
 }
 
 // function showMenu(event){
