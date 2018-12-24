@@ -132,15 +132,15 @@ function displayMenu() {
     };
     show("menu");
     let menuX = canvasPoint.x, menuY = canvasPoint.y;
-    if (range(0, canvas.width,canvasPoint.x+pointSize/2+get("menu").width)) {
-        menuX+=pointSize/2;
-    }else{
-        menuX+=-pointSize/2-get("menu").width;
+    if (range(0, canvas.width, canvasPoint.x + pointSize / 2 + get("menu").offsetWidth)) {
+        menuX += pointSize / 2;
+    } else {
+        menuX += -pointSize / 2 - get("menu").offsetWidth;
     }
-    if (range(0, canvas.height,canvasPoint.y+pointSize/2+get("menu").height)) {
-        menuY+=pointSize/2;
-    }else{
-        menuY+=-pointSize/2-get("menu").height;
+    if (range(0, canvas.height, canvasPoint.y + pointSize / 2 + get("menu").offsetHeight)) {
+        menuY += pointSize / 2;
+    } else {
+        menuY += -pointSize / 2 - get("menu").offsetHeight;
     }
     get("menu").style.left = menuX + "px";
     get("menu").style.top = menuY + "px";
