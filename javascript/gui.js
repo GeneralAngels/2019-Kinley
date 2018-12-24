@@ -110,6 +110,12 @@ function toCanvas(location) {
     return {x: x, y: y};
 }
 
+function remove() {
+    plan.points.splice(findPoint(selectedID), 1);
+    hide("menu");
+    drawField();
+}
+
 function displayMenu() {
     let point = plan.points[findPoint(selectedID)];
     let canvasPoint = toCanvas(point);
@@ -193,6 +199,10 @@ function drawField() {
         context.rect(-pointSize / 2, -pointSize / 2, pointSize, pointSize);
         context.fillStyle = '#88aa33';
         context.fill();
+        context.fillStyle = '#000000';
+        context.font = "30px Arial";
+        context.textAlign = "center";
+        context.fillText((p+1)+">", 0,pointSize/4);
         context.restore();
         // context.rotate(-parseInt(plan.points[p].alpha) * Math.PI / 180);
     }
