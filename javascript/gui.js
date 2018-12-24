@@ -1,4 +1,4 @@
-const pointSize = 10;
+const pointSize = 40;
 const originalHeight = 800;
 const originalWidth = 1625;
 const ratio = originalHeight / originalWidth;
@@ -54,14 +54,7 @@ function addPoint(location) {
         command: "None"
     };
     plan.points.push(point);
-    drawPoint(location);
-}
-
-function drawPoint(location) {
-    context.beginPath();
-    context.rect(location.x, location.y, pointSize, pointSize);
-    context.fillStyle = '#88aa33';
-    context.fill();
+    drawField();
 }
 
 function checkPoint(location) {
@@ -71,7 +64,6 @@ function checkPoint(location) {
     for (let p = 0; p < plan.points.length && !found; p++) {
         let point = plan.points[p];
         let canvasLocation = toCanvas(point);
-        console.log(point);
         if (range(canvasLocation.x - pointSize, canvasLocation.x + pointSize, x) && range(canvasLocation.y - pointSize, canvasLocation.y + pointSize, y)) {
             selectedID = point.id;
             found = true;
@@ -121,23 +113,37 @@ function toCanvas(location) {
 function displayMenu() {
     let point = plan.points[findPoint(selectedID)];
     let canvasPoint = toCanvas(point);
-    let angle=get("angle");
+    let angle = get("angle");
     let alpha = get("alpha");
     let input = get("command");
+    let onchange = () => {
+        point.alpha = alpha.value;
+        angle.innerText = "α: " + alpha.value + "°";
+        drawField();
+    };
     input.value = point.command;
     alpha.value = point.alpha;
-    angle.innerText = point.alpha;
-    alpha.onchange = function () {
-        point.alpha = alpha.value;
-        angle.innerText = alpha.value;
-    };
+    angle.innerText = "α: " + point.alpha + "°";
+    alpha.onchange = onchange;
+    alpha.oninput = onchange;
     input.onkeyup = function (event) {
         event.preventDefault();
         point.command = input.value;
     };
     show("menu");
-    get("menu").style.left = canvasPoint.x + 2 * pointSize + "px";
-    get("menu").style.top = canvasPoint.y + 2 * pointSize + "px";
+    let menuX = canvasPoint.x, menuY = canvasPoint.y;
+    if (range(0, canvas.width,canvasPoint.x+pointSize/2+get("menu").width)) {
+        menuX+=pointSize/2;
+    }else{
+        menuX+=-pointSize/2-get("menu").width;
+    }
+    if (range(0, canvas.height,canvasPoint.y+pointSize/2+get("menu").height)) {
+        menuY+=pointSize/2;
+    }else{
+        menuY+=-pointSize/2-get("menu").height;
+    }
+    get("menu").style.left = menuX + "px";
+    get("menu").style.top = menuY + "px";
 }
 
 function loadCanvas() {
@@ -166,7 +172,9 @@ function sizeCanvas() {
 }
 
 function drawField() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
     // Draw Perimeter
+    context.fillStyle = '#000000';
     for (let x = 0; x < canvas.width; x++) {
         context.fillRect(x, 0, 10, 10);
         context.fillRect(x, canvas.height - 10, 10, 10);
@@ -176,6 +184,18 @@ function drawField() {
         context.fillRect(canvas.width - 10, y, 10, 10);
     }
 
+    for (let p = 0; p < plan.points.length; p++) {
+        let location = toCanvas(plan.points[p]);
+        context.save();
+        context.translate(location.x, location.y);
+        context.rotate(parseInt(plan.points[p].alpha) * Math.PI / 180);
+        context.beginPath();
+        context.rect(-pointSize / 2, -pointSize / 2, pointSize, pointSize);
+        context.fillStyle = '#88aa33';
+        context.fill();
+        context.restore();
+        // context.rotate(-parseInt(plan.points[p].alpha) * Math.PI / 180);
+    }
 }
 
 function isVisible(id) {

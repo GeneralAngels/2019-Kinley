@@ -23,6 +23,11 @@ body {
     width: 20vw;
 }
 
+#menu>p{
+    display: flex;
+    flex-direction: column;
+}
+
 #field {
 }
 
