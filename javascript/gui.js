@@ -5,6 +5,16 @@ const ratio = originalHeight / originalWidth;
 
 let canvas, context;
 let plan = {field: {height: originalHeight, width: originalWidth}, points: []};
+/*
+point:{
+x:0,
+y:0,
+id:1234,
+action:"Lift"
+}
+ */
+
+let selectedID = undefined;
 
 function load() {
     console.log("Loading");
@@ -17,8 +27,32 @@ function test() {
     console.log("Test!");
 }
 
+function generateID() {
+    const max = 100000;
+    let random = 0;
+    while (random === 0) {
+        let currentRandom = Math.floor((Math.random() * max) + 1);
+        let found = false;
+        for (let p = 0; p < plan.points.length && !found; p++) {
+            if (plan.points[p].id === currentRandom) {
+                found = true;
+            }
+        }
+        if (!found) {
+            random = currentRandom;
+        }
+    }
+    return random;
+}
+
 function addPoint(location) {
-    plan.points.push(toField(location));
+    let point = {
+        x: toField(location).x,
+        y: toField(location).y,
+        id: generateID(),
+        command: "None"
+    };
+    plan.points.push(point);
     drawPoint(location);
 }
 
@@ -32,26 +66,34 @@ function drawPoint(location) {
 function checkPoint(location) {
     let x = location.x;
     let y = location.y;
-    let selectedPoint, selectedIndex = 0;
-    for (let p = 0; p < plan.points.length; p++) {
+    let found = false;
+    for (let p = 0; p < plan.points.length && !found; p++) {
         let point = plan.points[p];
-        let canvasLocation = toCanvas(location);
+        let canvasLocation = toCanvas(point);
         console.log(point);
         if (range(canvasLocation.x - pointSize, canvasLocation.x + pointSize, x) && range(canvasLocation.y - pointSize, canvasLocation.y + pointSize, y)) {
-            selectedPoint = point;
-            selectedIndex = p;
+            selectedID = point.id;
+            found = true;
         }
     }
-    if (selectedPoint !== undefined) {
-        console.log("Selected Point!");
-        select(selectedPoint, selectedIndex);
+    if (found) {
+        select();
     } else {
+        hide("menu");
         addPoint(location);
     }
 }
 
-function select(point, index) {
-    displayMenu(point);
+function findPoint(id) {
+    for (let i = 0; i < plan.points.length; i++) {
+        if (plan.points[i].id === id) {
+            return i;
+        }
+    }
+}
+
+function select() {
+    displayMenu();
 }
 
 function range(min, max, value) {
@@ -72,8 +114,18 @@ function toCanvas(location) {
     return {x: x, y: y};
 }
 
-function displayMenu(point) {
+function displayMenu() {
+    let point = plan.points[findPoint(selectedID)];
+    let canvasPoint = toCanvas(point);
+    let input = get("command");
+    input.value = point.command;
+    input.onkeyup = function (event) {
+        event.preventDefault();
+        point.command = input.value;
+    };
     show("menu");
+    get("menu").style.left = canvasPoint.x + 2 * pointSize + "px";
+    get("menu").style.top = canvasPoint.y + 2 * pointSize + "px";
 }
 
 function loadCanvas() {

@@ -16,6 +16,13 @@ body {
     bottom: 0;
 }
 
+#menu{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 20vw;
+}
+
 #field {
 }
 

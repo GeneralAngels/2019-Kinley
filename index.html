@@ -9,17 +9,21 @@
     <link rel="apple-touch-icon" href="icons/icon_apple.png"/>
     <link rel="icon" href="icons/icon.png"/>
     <link rel="stylesheet" href="css/app.css"/>
+    <link rel="stylesheet" href="css/webapp.css"/>
     <script src="javascript/gui.js"></script>
     <script src="javascript/utils.js"></script>
     <title>Kinley</title>
 </head>
 <body onload="load()">
-<div id="menu">
-</div>
 <div id="holder">
     <canvas id="field">
 
     </canvas>
+</div>
+<div id="menu">
+    <input placeholder="Command" id="command"/>
+    <button onclick="twist()">Twist</button>
+    <button onclick="remove()">Remove</button>
 </div>
 </body>
 </html>
