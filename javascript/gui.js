@@ -49,6 +49,7 @@ function addPoint(location) {
     let point = {
         x: toField(location).x,
         y: toField(location).y,
+        alpha: 0,
         id: generateID(),
         command: "None"
     };
@@ -79,8 +80,11 @@ function checkPoint(location) {
     if (found) {
         select();
     } else {
-        hide("menu");
-        addPoint(location);
+        if (isVisible("menu")) {
+            hide("menu");
+        } else {
+            addPoint(location);
+        }
     }
 }
 
@@ -117,8 +121,16 @@ function toCanvas(location) {
 function displayMenu() {
     let point = plan.points[findPoint(selectedID)];
     let canvasPoint = toCanvas(point);
+    let angle=get("angle");
+    let alpha = get("alpha");
     let input = get("command");
     input.value = point.command;
+    alpha.value = point.alpha;
+    angle.innerText = point.alpha;
+    alpha.onchange = function () {
+        point.alpha = alpha.value;
+        angle.innerText = alpha.value;
+    };
     input.onkeyup = function (event) {
         event.preventDefault();
         point.command = input.value;
@@ -137,7 +149,6 @@ function loadCanvas() {
         checkPoint({x: event.pageX - this.offsetLeft, y: event.pageY - this.offsetTop});
     };
 }
-
 
 function sizeCanvas() {
     const width = screen.availWidth;
@@ -165,6 +176,10 @@ function drawField() {
         context.fillRect(canvas.width - 10, y, 10, 10);
     }
 
+}
+
+function isVisible(id) {
+    return get(id).style.display !== "none";
 }
 
 // function showMenu(event){
