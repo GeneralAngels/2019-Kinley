@@ -158,7 +158,15 @@ function loadCanvas() {
     sizeCanvas();
     drawField();
     canvas.onmousedown = function (event) {
-        checkPoint({x: event.pageX - this.offsetLeft, y: event.pageY - this.offsetTop});
+        event.preventDefault();
+        console.log(event);
+        checkPoint({x: event.pageX - canvas.offsetLeft, y: event.pageY - canvas.offsetTop});
+    };
+    canvas.contextmenu = function (event) {
+        event.preventDefault();
+    };
+    canvas.oncontextmenu = function (event) {
+        window.event.returnValue = false;
     };
 }
 
@@ -202,7 +210,7 @@ function drawField() {
         context.fillStyle = '#000000';
         context.font = "30px Arial";
         context.textAlign = "center";
-        context.fillText((p+1)+">", 0,pointSize/4);
+        context.fillText((p + 1) + ">", 0, pointSize / 4);
         context.restore();
         // context.rotate(-parseInt(plan.points[p].alpha) * Math.PI / 180);
     }
@@ -210,6 +218,24 @@ function drawField() {
 
 function isVisible(id) {
     return get(id).style.display !== "none";
+}
+
+function save(name="new") {
+    let body = new FormData;
+    body.append("write", name);
+    body.append("plan", JSON.stringify(plan));
+    fetch("php/save.php", {
+        method: "POST",
+        cache: "no-store",
+        headers: {
+            'Cache-Control': 'no-cache'
+        },
+        body: body
+    }).then(response => {
+        response.text().then((response) => {
+            alert(JSON.parse(response).success===true?"Saved!":"Failed to save!");
+        });
+    });
 }
 
 // function showMenu(event){
